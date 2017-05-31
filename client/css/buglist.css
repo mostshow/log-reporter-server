@@ -1,0 +1,9 @@
+.info {
+    width: 15px;
+    height: 15px;
+    margin-top: -1px;
+}
+table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
