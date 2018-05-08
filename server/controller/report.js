@@ -103,13 +103,14 @@ export default {
         let row = +req.query.row || 1;
         let col = +req.query.col || 10;
         let sourceMapSrc = (req.query.sourceMapSrc && decodeURIComponent(req.query.sourceMapSrc)) || 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.map';
+        console.log(sourceMapSrc)
         if (row > 0 && col > 0 && sourceMapSrc) {
-            request(sourceMapSrc.replace(/_(\w{7})/,function($0, $1){return ''}),  (error, response, body) => {
+            request(sourceMapSrc,  (error, response, body) => {
                 if (!error && response.statusCode == 200) {
                     try {
                         JSON.parse(body);
                         let consumer = new sourceMap.SourceMapConsumer(body);
-                        let result = consumer.originalPositionFor({ line: row , column: col });
+                        let result = consumer.originalPositionFor({ line: row, column: col });
 
                         tools.sendResult(res,0,result);
                     } catch (e) {
