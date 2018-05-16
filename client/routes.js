@@ -3,11 +3,12 @@ import { Route, IndexRoute } from 'react-router';
 
 import App from './components/App';
 import BugList from './components/BugList';
+import Login from './components/Login';
 
 
 export default (
     <Route path="/" component={App}>
-        <IndexRoute component={BugList} />
+        <IndexRoute component={Login} />
     </Route>
 )
 

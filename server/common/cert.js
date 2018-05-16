@@ -3,11 +3,7 @@
  */
 'use strict'
 const mongoose = require('mongoose');
-const UserModel = require('../models/user');
-const OperateRoleModel = require('../models/operate_role');
-const RoleModel = require('../models/role');
 const config = require('../config');
-const Promise=require('bluebird');
 
 const WebStatus = require('./webStatus');
 
@@ -22,18 +18,7 @@ const CertMiddleWare = {
         }
         next();
     },
-    /**
-     * 需要管理员权限
-     */
-    adminRequired:function(req, res, next) {
-        if (!req.session.user) {
-            return res.send(WebStatus.init(-3).toJSON());
-        }
-        if (req.session.userRoleId != config.adminRoleId ) {
-            return res.send(WebStatus.init(403).toJSON());
-        }
-        next();
-    },
+
     /**
      * cookie签名保存
      */
@@ -46,57 +31,6 @@ const CertMiddleWare = {
             httpOnly: true
         };
         res.cookie(config.certCookieName, authToken, opts);
-        next();
-    },
-
-    /**
-     * 权限操作控制
-     */
-    accessControl : function(req,res,next){
-        if (!req.session.user) {
-            return res.send(WebStatus.init(-3).toJSON());
-        }
-        // if (req.session.userRoleId != config.adminRoleId ) {
-
-            let url = req.baseUrl;
-            let singleUrl = url.replace('/api/','');
-            let tempUrl = singleUrl.split('/');
-
-            tempUrl.pop();
-            tempUrl.push('*');
-
-            let multipleUrl = tempUrl.join('/');
-            Promise.props({
-                singleData:OperateRoleModel.getRoleIdByRoute(singleUrl),
-                multipleData:OperateRoleModel.getRoleIdByRoute(multipleUrl)
-            }).then(reData => {
-                let singleArr = (reData.singleData&&reData.singleData.roleId)||[];
-                let multipleDataArr = (reData.multipleData&&reData.multipleData.roleId)||[];
-                let roleId =req.session.user.roleId;
-                let tempArr = multipleDataArr.concat(singleArr).map(function(item){return String(item)})
-                if(~tempArr.indexOf(String(roleId))){
-                    next()
-                }else{
-                    res.send(WebStatus.init(403).toJSON());
-                }
-            }).catch(err =>{
-                res.send(WebStatus.init(500).toJSON());
-            })
-        // }else{
-        //     next()
-        // }
-    },
-    /**
-     * setHeader
-     *
-     */
-    setHeader: function(req, res, next){
-        //res.setHeader("Content-Type","text/html;charset=utf-8");
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3011');
-        res.setHeader('Access-Control-Allow-Credentials', true);
-        res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
         next();
     },
     /**

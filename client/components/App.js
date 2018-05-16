@@ -8,7 +8,7 @@ class App extends React.Component {
 
     render(){
         return (
-            <div class="container">
+            <div className="container">
                 <NavigationBar />
                 {this.props.children}
             </div>

@@ -6,6 +6,7 @@ import sourceMap from 'source-map'
 
 import LogModel from '../models/log_model'
 import tools from '../common/tools'
+import CertMiddleWare from '../common/cert';
 import config from '../config'
 
 export default {
@@ -59,6 +60,56 @@ export default {
             tools.sendResult(res,0);
         });
     },
+
+    login(req, res, next){
+        let username = req.body.username ;
+        let password = req.body.password ;
+
+        if (!username || !password) {
+            return tools.sendResult(res,-1);
+        }
+
+        if(config.user[username]&&(config.user[username].password == password) ){
+            CertMiddleWare.rootSession(config.user[username], res, next);
+            let result = {
+                status:'ok',
+                username:username
+            }
+            return tools.sendResult(res, 0, result)
+        }else{
+            return tools.sendResult(res,-9)
+        }
+
+        UserModel.getUserByUserName(username).then(user => {
+            if (!user) {
+                return tools.sendResult(res,-9);
+            }
+            let passhash = user.password;
+            user.comparePassword(password, (err, isMatch)=> {
+                if (err) {
+                    return tools.sendResult(res,500)
+                }
+                if (isMatch) {
+                    CertMiddleWare.rootSession(user, res, next);
+                    const token = jwt.sign({
+                        username:user.username,
+                        id:user._id,
+                        roleId:user.roleId
+                    }, config.jwtSecret);
+                    const result = {
+                        token:token
+                    }
+                    tools.sendResult(res,0,result)
+                }else{
+                    tools.sendResult(res,-9)
+                }
+            })
+        }).catch(err => {
+            //return next(err);
+            return tools.sendResult(res,-1);
+        });
+    },
+
     getLog(req, res, next) {
 
             let pageSize = +req.query.pageSize || 10;
@@ -90,11 +141,16 @@ export default {
                 if (err) {
                     tools.sendResult(res,-1);
                 } else {
+                    let datas = data.map(function(item){
+                        var subItem = item;
+                        subItem.referer = subItem.referer.split('?')[0];
+                        return subItem;
+                    })
                     LogModel.count(condition).exec( (error, result) => {
                         if (error) {
                             tools.sendResult(res,-1);
                         } else {
-                            tools.sendResult(res,0,{data: data, total: result});
+                            tools.sendResult(res,0,{data: datas, total: result});
                         }
                     });
                 }

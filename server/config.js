@@ -11,7 +11,13 @@ export default {
         password: "qguanzi",
         port:27017,
     },
-    debug: true
-
-
+    debug: true,
+    user:{
+        heli:{
+            password:'123456',
+            _id:'fsfwejrdflwejor'
+        }
+    },
+    sessionSecret: 'log_secret', // session密匙
+    certCookieName: 'log_cookie' //cookie名称
 }

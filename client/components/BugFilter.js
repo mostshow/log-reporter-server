@@ -57,6 +57,7 @@ class BugFilter extends React.Component {
         let options = [
             { value: 'ip', label: 'IP' },
             { value: 'env', label: 'Env' },
+            { value: 'userId', label: 'userId' },
             { value: 'level', label: 'Level' },
             { value: 'msg', label: 'Message' },
             { value: 'referer', label: 'Referer' },
