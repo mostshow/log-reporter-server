@@ -30,6 +30,7 @@ export default {
         let from = req.query.from || '';
         let type = req.query.type || 'NONE'
         let env = req.query.env
+        let userId = req.query.userId || 'NONE'
 
         let _log = {
             ip: ip,
@@ -43,6 +44,7 @@ export default {
             referer: referer,
             resolution: resolution ,
             from: from,
+            userId: userId,
             type: type,
 
         }

@@ -14,13 +14,14 @@ var logSchema = new Schema({
 	createAt: Number, // log创建时间
 	resolution: String, // 分辨率
 	msg: String,
-    level: String,
+  level: String,
 	col: Number,
 	env: String,
 	row: Number,
 	sourceFile: String, // 错误文件url
 	referer: String,
-    type: String,
+  type: String,
+  userId: String,
 	from: String
 });
 
