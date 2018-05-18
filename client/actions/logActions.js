@@ -1,15 +1,11 @@
 
 
 import axios from 'axios';
-
 import { GETLOG, LOGIN } from './types';
 
 export function logRequest(logData) {
     return dispatch => {
-        return axios.get('/api/report/getlog', {
-            params:logData
-        }).then(res => {
-
+        return axios.post('/api/report/getlog', fixDaga(logData)).then(res => {
             if (res.status == 200 && res.data) {
                 const data = res.data;
                 if(data.code == 0){
@@ -18,8 +14,12 @@ export function logRequest(logData) {
                         type:GETLOG,
                         logList
                     });
-                }else{
+                }else if(data.code == -3 || data.code == -4){
+                    localStorage.removeItem('token')
+                    window.location.href = 'login'
                     alert(data.msg)
+                }else{
+                    alert('api error!!!')
                 }
 
             } else {
@@ -30,17 +30,17 @@ export function logRequest(logData) {
     }
 }
 
-export function loginRequest(logData) {
+export function loginRequest(data) {
     return dispatch => {
-        return axios.post('/api/report/login', logData).then(res => {
-
+        return axios.post('/api/report/login', fixDaga(data)).then(res => {
             if (res.status == 200 && res.data) {
                 const loginData = res.data;
                 if(loginData.code == 0){
-                    localStorage.setItem('userName', loginData.result.userName);
+                    const token = loginData.result.token;
+                    localStorage.setItem('token', token);
+                    window.location.href = 'log'
                 }else{
                     alert(loginData.msg)
-                    localStorage.removeItem('userName')
                 }
 
             } else {
@@ -52,10 +52,13 @@ export function loginRequest(logData) {
 }
 
 
-export function parseSourceMap(logData) {
+export function parseSourceMap(data) {
     return dispatch => {
-        return axios.get('/api/report/getSourceMap', {
-            params:logData
-        })
+        return axios.post('/api/report/getSourceMap', fixDaga(data))
     }
+}
+
+function fixDaga(data){
+    data.token = localStorage.getItem('token') || '';
+    return data
 }

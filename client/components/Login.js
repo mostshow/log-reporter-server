@@ -3,6 +3,7 @@ import React from 'react'
 
 import styles from '../css/login.css'
 import { connect } from 'react-redux'
+
 import { loginRequest } from '../actions/logActions'
 import { Form, FormGroup, Col, ControlLabel, FormControl, Checkbox, Button, Modal } from 'react-bootstrap';
 class Login extends React.Component {

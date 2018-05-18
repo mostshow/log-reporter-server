@@ -34,7 +34,8 @@ class BugList extends React.Component {
         this.props.parseSourceMap({
             row:logData.row,
             col:logData.col,
-            sourceMapSrc:logData.sourceFile + '.map'
+            sourceMapSrc:logData.sourceFile + '.map',
+            token:localStorage.getItem('token') || ''
         }).then((res) => {
             if (res.status == 200 && res.data) {
                 if (res.data.code == 0) {
@@ -42,11 +43,15 @@ class BugList extends React.Component {
                     str += '行号: ' + res.data.result.line + '\n';
                     str += '变量名: ' + res.data.result.name + '\n';
                     alert(str);
-                } else {
-                    alert( 'request file error!');
+                } else if(data.code == -3 || data.code == -4){
+                    localStorage.removeItem('token')
+                    browserHistory.push('/login')
+                    alert(data.msg)
+                }else{
+                alert( 'request file error!');
                 }
             } else {
-                console.error(res);
+                alert( 'request file error!');
             }
         },(err) => {
             console.error(err);

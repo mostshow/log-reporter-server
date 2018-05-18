@@ -45,10 +45,12 @@ app.use(express.static(path.join(__dirname, '../client')));
 mongokeeper.config(config.dbConfig);
 
 app.use('/api',apiRouter);
-
-app.get('/*' ,(req, res) => {
+app.get('*', function (req, res){
     res.sendFile(path.join(__dirname, './index.html'))
 })
+// app.get('/*' ,(req, res) => {
+//     res.sendFile(path.join(__dirname, './index.html'))
+// })
 
 
 app.listen(config.httpPort, () => console.log("You can debug your app with http://" + config.localhost + ':' +config.httpPort ))

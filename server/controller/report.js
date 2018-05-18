@@ -3,7 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import request from 'request'
 import sourceMap from 'source-map'
-
+import jwt from 'jsonwebtoken';
 import LogModel from '../models/log_model'
 import tools from '../common/tools'
 import CertMiddleWare from '../common/cert';
@@ -70,44 +70,22 @@ export default {
         }
 
         if(config.user[username]&&(config.user[username].password == password) ){
-            CertMiddleWare.rootSession(config.user[username], res, next);
-            let result = {
-                status:'ok',
-                username:username
+            // CertMiddleWare.rootSession(config.user[username], res, next);
+            // let result = {
+            //     status:'ok',
+            //     username:username
+            // }
+            const token = jwt.sign({
+                username:username,
+                id:config.user[username]._id
+            }, config.jwtSecret, { expiresIn: 60*3 });
+            const result = {
+                token:token
             }
             return tools.sendResult(res, 0, result)
         }else{
             return tools.sendResult(res,-9)
         }
-
-        UserModel.getUserByUserName(username).then(user => {
-            if (!user) {
-                return tools.sendResult(res,-9);
-            }
-            let passhash = user.password;
-            user.comparePassword(password, (err, isMatch)=> {
-                if (err) {
-                    return tools.sendResult(res,500)
-                }
-                if (isMatch) {
-                    CertMiddleWare.rootSession(user, res, next);
-                    const token = jwt.sign({
-                        username:user.username,
-                        id:user._id,
-                        roleId:user.roleId
-                    }, config.jwtSecret);
-                    const result = {
-                        token:token
-                    }
-                    tools.sendResult(res,0,result)
-                }else{
-                    tools.sendResult(res,-9)
-                }
-            })
-        }).catch(err => {
-            //return next(err);
-            return tools.sendResult(res,-1);
-        });
     },
 
     getLog(req, res, next) {
@@ -143,7 +121,7 @@ export default {
                 } else {
                     let datas = data.map(function(item){
                         var subItem = item;
-                        subItem.referer = subItem.referer.split('?')[0];
+                        subItem.referer = subItem.referer.split('?')[0];//.replace(/(&token=[^&]*)/,' ')
                         return subItem;
                     })
                     LogModel.count(condition).exec( (error, result) => {

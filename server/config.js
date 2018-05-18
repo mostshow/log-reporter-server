@@ -18,6 +18,7 @@ export default {
             _id:'fsfwejrdflwejor'
         }
     },
+    jwtSecret: 'somesecretkeyforjsonwebtoken',
     sessionSecret: 'log_secret', // session密匙
     certCookieName: 'log_cookie' //cookie名称
 }

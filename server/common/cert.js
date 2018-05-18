@@ -2,21 +2,32 @@
  * 用户权限控制
  */
 'use strict'
-const mongoose = require('mongoose');
-const config = require('../config');
 
-const WebStatus = require('./webStatus');
-
+import mongoose from 'mongoose'
+import config from '../config'
+import WebStatus from './webStatus'
+import jwt from 'jsonwebtoken'
 
 const CertMiddleWare = {
     /**
      * 需要登录
      */
     userRequired:function (req, res, next) {
-        if (!req.session || !req.session.user) {
+        console.log(req.body)
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        if (token) {
+            jwt.verify(token, config.jwtSecret , function(err, decoded) {
+                if (err) {
+                    return res.send(WebStatus.init(-4).toJSON());
+                } else {
+                    req.api_user = decoded;
+                    console.dir(req.api_user);
+                    next();
+                }
+            });
+        }else{
             return res.send(WebStatus.init(-3).toJSON());
         }
-        next();
     },
 
     /**
@@ -32,44 +43,6 @@ const CertMiddleWare = {
         };
         res.cookie(config.certCookieName, authToken, opts);
         next();
-    },
-    /**
-     * 验证用户是否登录
-     */
-    authUser:function(req, res, next) {
-        if (req.session.user) {
-            setUser(req.session.user);
-        } else {
-            let authToken = req.signedCookies[config.certCookieName];
-            if (!authToken) {
-                return next();
-            }
-            let auth = authToken.split('$$$$');
-            let userId = auth[0];
-
-            UserModel.getUserById(userId).then(user=>{
-                setUser(user);
-                return null;
-            }).catch(err=>{
-                return next(err);
-            });
-        }
-
-        function setUser(user) {
-            if (!user) {
-                return next();
-            }
-            user = req.session.user = new UserModel(user);
-            RoleModel.findOne({_id:user.roleId}).then(reData =>{
-                req.session.userRoleId = reData.roleId;
-                next();
-            }).catch(err=>{
-                console.log(err)
-                res.send(WebStatus.init(-8).toJSON());
-                // return next(err);
-            });
-
-        }
     }
 }
 
