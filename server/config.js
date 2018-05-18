@@ -13,12 +13,12 @@ export default {
     },
     debug: true,
     user:{
-        heli:{
-            password:'123456',
+        qguanzi:{
+            password:'qguanzi2018',
             _id:'fsfwejrdflwejor'
         }
     },
-    jwtSecret: 'somesecretkeyforjsonwebtoken',
+    jwtSecret: 'fsfwejrdflwejor',
     sessionSecret: 'log_secret', // session密匙
     certCookieName: 'log_cookie' //cookie名称
 }
