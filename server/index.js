@@ -32,14 +32,7 @@ if(process.env.NODE_ENV == 'development'){
     }))
     app.use(webpackHotMiddleware(compiler))
 }
-    compiler = webpack(webpackDevConfig)
-    app.use(webpackMiddleware(compiler,{
-        hot: true,
-        publicPath: webpackDevConfig.output.publicPath,
-        noInfo: false
 
-    }))
-    app.use(webpackHotMiddleware(compiler))
 app.use(express.static(path.join(__dirname, '../client')));
 
 mongokeeper.config(config.dbConfig);
