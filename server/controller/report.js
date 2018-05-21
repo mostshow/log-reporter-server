@@ -90,12 +90,12 @@ export default {
 
     getLog(req, res, next) {
 
-            let pageSize = +req.query.pageSize || 10;
-            let currentPage = +req.query.curPage ;
-            let from = new Date(req.query.startDate).getTime();
-            let to = new Date(req.query.endDate).getTime();
-            let keyword = req.query.keyword;
-            let selectValue = req.query.selectValue;
+            let pageSize = +req.query.pageSize || req.body.pageSize || 10;
+            let currentPage = +(req.query.curPage || req.body.curPage) ;
+            let from = new Date(req.query.startDate || req.body.startDate).getTime();
+            let to = new Date(req.query.endDate || req.body.endDate).getTime();
+            let keyword = req.query.keyword || req.body.keyword;
+            let selectValue = req.query.selectValue || req.body.selectValue ;
             var sort = {'createAt': -1};
 
             var condition = {};
@@ -136,9 +136,9 @@ export default {
     },
     getSourceMap(req, res){
 
-        let row = +req.query.row || 1;
-        let col = +req.query.col || 10;
-        let sourceMapSrc = (req.query.sourceMapSrc && decodeURIComponent(req.query.sourceMapSrc)) || 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.map';
+        let row = +req.query.row || req.body.row || 1;
+        let col = +req.query.col || req.body.col || 10;
+        let sourceMapSrc = ((req.query.sourceMapSrc || req.body.sourceMapSrc)  && decodeURIComponent(req.query.sourceMapSrc || req.body.sourceMapSrc)) || 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.map';
         console.log(sourceMapSrc)
         if (row > 0 && col > 0 && sourceMapSrc) {
             request(sourceMapSrc,  (error, response, body) => {
