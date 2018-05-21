@@ -121,7 +121,8 @@ export default {
                 } else {
                     let datas = data.map(function(item){
                         var subItem = item;
-                        subItem.referer = subItem.referer.split('?')[0];//.replace(/(&token=[^&]*)/,' ')
+                        subItem.referer = subItem.referer.replace(/(&token=[^&]*)/,' '); //.split('?')[0];
+                        subItem.from = subItem.from.replace(/(&token=[^&]*)/,' '); //.split('?')[0];
                         return subItem;
                     })
                     LogModel.count(condition).exec( (error, result) => {

@@ -100,9 +100,10 @@ class BugList extends React.Component {
                         <th className="col-md-1">Type</th>
                         <th className="col-md-1">IP</th>
                         <th className="col-md-1">Resolution</th>
+                        <th className="col-md-1">From</th>
                         <th className="col-md-1">Referer</th>
                         <th className="col-md-1">Source-File</th>
-                        <th className="col-md-2">Message</th>
+                        <th className="col-md-1">Message</th>
                         <th className="col-md-1">UA</th>
                     </tr>
                 </thead>

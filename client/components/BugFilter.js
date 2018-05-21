@@ -60,6 +60,7 @@ class BugFilter extends React.Component {
             { value: 'userId', label: 'userId' },
             { value: 'level', label: 'Level' },
             { value: 'msg', label: 'Message' },
+            { value: 'from', label: 'From' },
             { value: 'referer', label: 'Referer' },
             { value: 'resolution', label: 'Resolution' },
             { value: 'sourceFile', label: 'Source-File' },
